@@ -1,0 +1,40 @@
+name: Link plugin to dashboard
+
+# Run this manually (Actions tab -> this workflow -> "Run workflow") after
+# "Register plugin to GoodData workspace" has given you a plugin object id.
+# Attaches that already-registered plugin to the dashboard specified in .env
+# (GD_sales_rep_order_metrics). You can re-run this later with a different
+# plugin_id, or to attach the same plugin to a different DASHBOARD_ID by
+# editing .env first.
+#
+# Requires the same TIGER_API_TOKEN repository secret as the register workflow.
+#
+# This project's files live inside the top20_products_gallery/ subfolder of this repo,
+# so this job runs with that as its working directory.
+on:
+  workflow_dispatch:
+    inputs:
+      plugin_id:
+        description: "Plugin object id printed by the 'Register plugin to GoodData workspace' workflow"
+        required: true
+
+jobs:
+  link:
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: top20_products_gallery
+    env:
+      TIGER_API_TOKEN: ${{ secrets.TIGER_API_TOKEN }}
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+
+      - name: Install dependencies
+        run: npm install --legacy-peer-deps
+
+      - name: Link plugin to dashboard
+        run: npm run link-plugin -- "${{ github.event.inputs.plugin_id }}"
