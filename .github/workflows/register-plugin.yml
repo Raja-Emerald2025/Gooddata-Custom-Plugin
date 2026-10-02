@@ -1,0 +1,43 @@
+name: Register plugin to GoodData workspace
+
+# Run this manually ONCE after the first successful Pages deploy (Actions tab -> this
+# workflow -> "Run workflow"). It registers the already-hosted plugin bundle as a plugin
+# object in your GoodData workspace and prints the plugin object id in the job log --
+# copy that id, you'll need it for the "Link plugin to dashboard" workflow.
+#
+# Requires a repository secret named TIGER_API_TOKEN (Settings -> Secrets and variables
+# -> Actions -> New repository secret). The token itself is never visible to anyone
+# (including Claude) once saved there -- GitHub only ever shows it once, at creation.
+#
+# This project's files live inside the top20_products_gallery/ subfolder of this repo,
+# so this job runs with that as its working directory.
+on:
+  workflow_dispatch:
+    inputs:
+      plugin_url:
+        description: >-
+          Full HTTPS URL to the built plugin's entry file, as deployed by GitHub Pages.
+          Check the "Build plugin and deploy to GitHub Pages" workflow's last run for the
+          exact Pages URL, then append /dp_top_20_products_gallery.mjs to it.
+        required: true
+
+jobs:
+  register:
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: top20_products_gallery
+    env:
+      TIGER_API_TOKEN: ${{ secrets.TIGER_API_TOKEN }}
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+
+      - name: Install dependencies
+        run: npm install --legacy-peer-deps
+
+      - name: Register plugin in workspace
+        run: npm run add-plugin -- "${{ github.event.inputs.plugin_url }}"
