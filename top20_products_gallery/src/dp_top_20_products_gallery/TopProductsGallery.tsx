@@ -33,7 +33,7 @@ export function TopProductsGallery(props: IDashboardWidgetProps): ReactElement {
     const productNumber = newAttribute(idRef(PRODUCT_NUMBER_ATTR_ID), (a) => a.alias("Product Number"));
     const productName = newAttribute(idRef(PRODUCT_NAME_ATTR_ID), (a) => a.alias("Product Name"));
     const imageUrl = newAttribute(idRef(IMAGE_URL_ATTR_ID), (a) => a.alias("Image URL"));
-    const revenue = newMeasure(idRef(REVENUE_METRIC_ID), (m) => m.alias("Revenue"));
+    const revenue = newMeasure(idRef(REVENUE_METRIC_ID, "measure"), (m) => m.alias("Revenue"));
 
     const { result, status, error } = useCustomWidgetExecutionDataView({
         // Hook requires a real ICustomWidget; when this component is (mis)used outside that
