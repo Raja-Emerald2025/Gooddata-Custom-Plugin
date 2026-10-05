@@ -44,7 +44,7 @@ export class Plugin extends DashboardPluginV1 {
         customize.customWidgets().addCustomWidget("topProductsGallery", TopProductsGallery);
         customize.layout().customizeFluidLayout((_layout, customizer) => {
             customizer.addSection(
-                0,
+                -1,
                 newDashboardSection(
                     "Top 20 Products by Revenue",
                     newDashboardItem(newCustomWidget("topProductsGalleryWidget", "topProductsGallery"), {
